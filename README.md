@@ -23,28 +23,28 @@ Vivliostyleが設置されている場所の、`resources`ディレクトリ直�
 
 初期化を行う。ドキュメントを区別するためのIdが渡される。
 
-`persistMark(mark: {mark: string, id: string}): string`
+`persistMark(mark: {mark: string, id: string, memo: string}): string`
 
 渡された`mark`オブジェクトに一意なidをセットし、そのidを返却する。
 idはstringでなくてはならない。（例えばnumberであってはならない）。
 
-`getMark(id: string): { mark: string, id: string}`
+`getMark(id: string): { mark: string, id: string, memo: string}`
 
 渡された`id`を持つ`mark`を返す。
 
-`updateMark(mark: {mark: string, id: string}): void`
+`updateMark(mark: {mark: string, id: string, memo: string}): void`
 
 渡された`mark`を更新する。`mark`の判別は`id`で行う。（同じ`id`でコピーされたオブジェクトが渡される場合もあるため）
 
-`removeMark(mark: {mark: string, id: string}): void`
+`removeMark(mark: {mark: string, id: string, memo: string}): void`
 
 渡された`mark`を削除する。
 
-`allMarks(): {mark:string, id: string}[]`
+`allMarks(): {mark:string, id: string, memo: string}[]`
 
 記憶しているすべての`mark`を配列で返す。メモリにすべてが載ってしまうため、可能なら次の`allMarksIterator`も実装するのが望ましい。
 
-`allMarksIterator(): AsyncIterable<{mark:string, id: string}>` （オプショナル）
+`allMarksIterator(): AsyncIterable<{mark:string, id: string: memo: string}>` （オプショナル）
 
 記憶しているすべての`mark`に対する、`AsyncIterable`を返す。
 
