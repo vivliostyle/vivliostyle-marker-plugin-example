@@ -19,32 +19,31 @@ Vivliostyleが設置されている場所の、`resources`ディレクトリ直�
 以下のメソッドを持つオブジェクトを生成し、`window.marksStorePlugin`に設定する。
 （TypeScriptの記法で型は表記している）
 
-`init(documentId: string): void` 
+`async init(documentId: string): Promise<void>` 
 
 初期化を行う。ドキュメントを区別するためのIdが渡される。
 
-`persistMark(mark: {mark: string, id: string, memo: string}): string`
-
+`async persistMark(mark: {mark: string, id: string, memo: string}): Promise<string>`
 渡された`mark`オブジェクトに一意なidをセットし、そのidを返却する。
 idはstringでなくてはならない。（例えばnumberであってはならない）。
 
-`getMark(id: string): { mark: string, id: string, memo: string}`
+`async getMark(id: string): Promise<{ mark: string, id: string, memo: string}| undefined }>`
 
 渡された`id`を持つ`mark`を返す。
 
-`updateMark(mark: {mark: string, id: string, memo: string}): void`
+`async updateMark(mark: {mark: string, id: string, memo: string}): Promise<void>`
 
 渡された`mark`を更新する。`mark`の判別は`id`で行う。（同じ`id`でコピーされたオブジェクトが渡される場合もあるため）
 
-`removeMark(mark: {mark: string, id: string, memo: string}): void`
+`async removeMark(mark: {mark: string, id: string, memo: string}): Promise<void>`
 
 渡された`mark`を削除する。
 
-`allMarks(): {mark:string, id: string, memo: string}[]`
+`async allMarks(): Promise<{mark:string, id: string, memo: string}[]>`
 
 記憶しているすべての`mark`を配列で返す。メモリにすべてが載ってしまうため、可能なら次の`allMarksIterator`も実装するのが望ましい。
 
-`allMarksIterator(): AsyncIterable<{mark:string, id: string: memo: string}>` （オプショナル）
+`async allMarksIterator(): Promise<AsyncIterable<{mark:string, id: string: memo: string}>>` （オプショナル）
 
 記憶しているすべての`mark`に対する、`AsyncIterable`を返す。
 
@@ -59,32 +58,32 @@ class TestMarkStore {
     this.documentId = '';
     this.seq = 0;
   }
-  init(documentId) {
+  async init(documentId) {
     console.log(`-----${documentId}-----`);
     this.documentId = documentId;
   }
-  persistMark(mark) {
+  async persistMark(mark) {
     const id = `${this.seq++}`;
     mark.id = id;
     this.marks[id] = mark;
     return id;
   }
-  getMark(id) {
+  async getMark(id) {
     return this.marks[id];
   }
   
-  updateMark(mark) {
+  async updateMark(mark) {
     this.marks[mark.id] = mark;
   }
-  removeMark(mark) {
+  async removeMark(mark) {
     this.marks[mark.id] = undefined;
   }
 
-  allMarks() {
+  async allMarks() {
     return Object.values(this.marks);
   }
 
-  allMarksIterator() {
+  async allMarksIterator() {
     const marks = this.allMarks();
     return (function*() {
       let i = 0;
@@ -98,4 +97,17 @@ class TestMarkStore {
 
 window['marksStorePlugin'] = new TestMarkStore();
 ```
+
+## ある程度実用的な例
+
+本レポジトリにIndexedDBを使ったサンプル実装を設置している。IndexedDBの操作には[Dexie.js](https://dexie.org)を利用している。
+これにより、ブラウザごとにマーカーを記憶することができる。
+
+`src/indexeddb/`以下のjsファイルを、vivliostyle-viewerの`resources`に配置することで動作させることができる。
+
+## ライセンスについて
+
+このAPIに沿ったプラグインがVivliostyle.jsの一部となるかどうかは、判断が難しい境界線上のケースになると思われる。プラグインそのものはAGPL（またはAGPLと互換性のあるオープンソースライセンス）とするのが安全であると考えられる。
+
+なおこのAPIに沿ったプラグインを用いてサーバと通信する場合、サーバ側のコードをAGPLにする必要はない。
 
