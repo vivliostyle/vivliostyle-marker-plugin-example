@@ -24,6 +24,7 @@ Vivliostyleが設置されている場所の、`resources`ディレクトリ直�
 初期化を行う。ドキュメントを区別するためのIdが渡される。
 
 `async persistMark(mark: {mark: string, id: string, memo: string}): Promise<string>`
+
 渡された`mark`オブジェクトに一意なidをセットし、そのidを返却する。
 idはstringでなくてはならない。（例えばnumberであってはならない）。
 
@@ -101,9 +102,9 @@ window['marksStorePlugin'] = new TestMarkStore();
 ## ある程度実用的な例
 
 本レポジトリにIndexedDBを使ったサンプル実装を設置している。IndexedDBの操作には[Dexie.js](https://dexie.org)を利用している。
-これにより、ブラウザごとにマーカーを記憶することができる。
+これにより、ブラウザごとにマーカーを記憶することができる。IndexedDBはブラウザの持つDBであるため、別のブラウザ間でのマーカー共有はできない。
 
-`src/indexeddb/`以下のjsファイルを、vivliostyle-viewerの`resources`に配置することで動作させることができる。
+`src/indexed-db/`以下のjsファイルを、vivliostyle-viewerの`resources`に配置することで動作させることができる。
 
 ## プラグインのライセンスについて
 
