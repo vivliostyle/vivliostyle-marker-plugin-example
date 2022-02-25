@@ -105,9 +105,13 @@ window['marksStorePlugin'] = new TestMarkStore();
 
 `src/indexeddb/`以下のjsファイルを、vivliostyle-viewerの`resources`に配置することで動作させることができる。
 
-## ライセンスについて
+## プラグインのライセンスについて
 
 このAPIに沿ったプラグインがVivliostyle.jsの一部となるかどうかは、判断が難しい境界線上のケースになると思われる。プラグインそのものはAGPL（またはAGPLと互換性のあるオープンソースライセンス）とするのが安全であると考えられる。
 
 なおこのAPIに沿ったプラグインを用いてサーバと通信する場合、サーバ側のコードをAGPLにする必要はない。
 
+## LICENSE
+
+* このレポジトリの`/src/indexed-db/marks-store-plugin.js`は[Vivliostyle.js](https://github.com/vivliostyle/vivliostyle.js)の一部とみなし、AGPL3ライセンスとします。
+* `/src/indexed-db/dexie.min.js`は[Dexie.js](https://dexie.org)の成果物であり、Apache License 2.0でライセンスされています。
