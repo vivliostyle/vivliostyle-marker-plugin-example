@@ -44,7 +44,7 @@ idはstringでなくてはならない。（例えばnumberであってはなら
 
 記憶しているすべての`mark`を配列で返す。メモリにすべてが載ってしまうため、可能なら次の`allMarksIterator`も実装するのが望ましい。
 
-`async allMarksIterator(): Promise<AsyncIterable<{mark:string, id: string: memo: string}>>` （オプショナル）
+`async allMarksIterator(): Promise<AsyncIterable<{mark:string, id: string memo: string}>>` （オプショナル）
 
 記憶しているすべての`mark`に対する、`AsyncIterable`を返す。
 
