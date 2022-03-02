@@ -30,10 +30,12 @@ IDは、URLのquery parametersのうち、`src`・`bookMode`・`style`・`userSt
 例えば、`&src=/thebook/&bookMode=true&userStyle=/content/thebook-style.css`に対しては、以下の文字列がdocumentIdとなる。
 `/thebook/:true::/content/thebook-style.css`
 
-##### `async persistMark(mark: {mark: string, id: string, memo: string}): Promise<string>`
+##### `async persistMark(mark: {mark: string, id: string, memo: string}, markedText?: string): Promise<string>`
 
 渡された`mark`オブジェクトに一意なidをセットし、`documentId`などの閲覧中の文書を区別する情報と共に記憶する。戻り値としてidを返却する。
 idはstringでなくてはならない。（例えばnumberであってはならない）。
+
+`markedText`には、マークされた部分のテキスト情報が入る。
 
 ##### `async getMark(id: string): Promise<{ mark: string, id: string, memo: string}| undefined }>`
 
@@ -70,7 +72,8 @@ class TestMarkStore {
     console.log(`-----${documentId}-----`);
     this.documentId = documentId;
   }
-  async persistMark(mark) {
+  async persistMark(mark, markedText) {
+    console.log(`highlighted: ${markedText}`);
     const id = `${this.seq++}`;
     mark.id = id;
     this.marks[id] = mark;
