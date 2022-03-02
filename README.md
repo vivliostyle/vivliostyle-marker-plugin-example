@@ -14,43 +14,50 @@ URL以外の場所にマーカーを記録したい場合は、プラグイン�
 
 Vivliostyleが設置されている場所の、`resources`ディレクトリ直下に、`marks-store-plugin.js`の名前でjsファイルを設置する。
 
-### 条件
+### プラグインの実装すべきメソッドなど
 
 以下のメソッドを持つオブジェクトを生成し、`window.marksStorePlugin`に設定する。
 （TypeScriptの記法で型は表記している）
 
-`async init(documentId: string): Promise<void>` 
+##### `async init(documentId: string): Promise<void>` 
 
-初期化を行う。ドキュメントを区別するためのIdが渡される。
+初期化を行う。ドキュメントを区別するためのIDが渡される。このIDを、閲覧中の文書を特定する情報として、マーカー情報と合わせてDBなどに保存させることを意図しているが、プラグインは他の方法で閲覧中の文書が特定できるのであれば、必ずしもこの情報を利用する必要はない。
 
-`async persistMark(mark: {mark: string, id: string, memo: string}): Promise<string>`
+IDは、URLのquery parametersのうち、`src`・`bookMode`・`style`・`userStyle`を`:`で繋いだ次のような文字列である。
 
-渡された`mark`オブジェクトに一意なidをセットし、そのidを返却する。
+`<src>:<bookMode>:<style>:<userStyle>`
+
+例えば、`&src=/thebook/&bookMode=true&userStyle=/content/thebook-style.css`に対しては、以下の文字列がdocumentIdとなる。
+`/thebook/:true::/content/thebook-style.css`
+
+##### `async persistMark(mark: {mark: string, id: string, memo: string}): Promise<string>`
+
+渡された`mark`オブジェクトに一意なidをセットし、`documentId`などの閲覧中の文書を区別する情報と共に記憶する。戻り値としてidを返却する。
 idはstringでなくてはならない。（例えばnumberであってはならない）。
 
-`async getMark(id: string): Promise<{ mark: string, id: string, memo: string}| undefined }>`
+##### `async getMark(id: string): Promise<{ mark: string, id: string, memo: string}| undefined }>`
 
 渡された`id`を持つ`mark`を返す。
 
-`async updateMark(mark: {mark: string, id: string, memo: string}): Promise<void>`
+##### `async updateMark(mark: {mark: string, id: string, memo: string}): Promise<void>`
 
 渡された`mark`を更新する。`mark`の判別は`id`で行う。（同じ`id`でコピーされたオブジェクトが渡される場合もあるため）
 
-`async removeMark(mark: {mark: string, id: string, memo: string}): Promise<void>`
+##### `async removeMark(mark: {mark: string, id: string, memo: string}): Promise<void>`
 
 渡された`mark`を削除する。
 
-`async allMarks(): Promise<{mark:string, id: string, memo: string}[]>`
+##### `async allMarks(): Promise<{mark:string, id: string, memo: string}[]>`
 
-記憶しているすべての`mark`を配列で返す。メモリにすべてが載ってしまうため、可能なら次の`allMarksIterator`も実装するのが望ましい。
+閲覧中のに文書に対応するすべての`mark`を配列で返す。メモリにすべてが載ってしまうため、可能なら次の`allMarksIterator`も実装するのが望ましい。
 
-`async allMarksIterator(): Promise<AsyncIterable<{mark:string, id: string memo: string}>>` （オプショナル）
+##### `async allMarksIterator(): Promise<AsyncIterable<{mark:string, id: string memo: string}>>` 
 
-記憶しているすべての`mark`に対する、`AsyncIterable`を返す。
+（オプショナル） 閲覧中の文書に対応するすべての`mark`に対する、`AsyncIterable`を返す。
 
 ## 簡単な例
 
-すべてのマーカーをメモリ上に記憶するプラグインの例を以下に示す。
+すべてのマーカーをメモリ上に記憶するプラグインの例を以下に示す。メモリ上に記憶するためだけなので、閲覧中の文書を特定する必要はなく、`documentId`は内部では扱和ない。
 
 ``` javascript
 class TestMarkStore {
