@@ -28,9 +28,8 @@ export class ExampleMarkStoreIDB {
   async init(documentId) {
     this.documentId = documentId;
   }
-  async persistMark(mark, markedText) {
+  async persistMark(mark) {
     mark.documentId = this.documentId;
-    mark.markedText = markedText || '';
     delete mark.id;
     return this.db.marks.put(mark);
   }
@@ -40,7 +39,6 @@ export class ExampleMarkStoreIDB {
     if (d) {
       d = Object.assign({}, d);
       delete d.documentId;
-      delete d.markedText;
     }
     return d;
   }
@@ -56,7 +54,7 @@ export class ExampleMarkStoreIDB {
   async allMarks() {
     const collection = this.db.marks.where({documentId: this.documentId});
     const r = await collection.toArray();
-    return r.map(x => { delete x.documentId; delete x.markedText; return x });
+    return r.map(x => { delete x.documentId; return x });
   }
 
   async allMarksIterator() {
@@ -69,7 +67,6 @@ export class ExampleMarkStoreIDB {
         if (v) {
           v = Object.assign({}, v);
           delete v.documentId;
-          delete v.markedText;
         }
         yield v;
       }

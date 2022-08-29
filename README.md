@@ -23,37 +23,32 @@ Vivliostyleが設置されている場所の、`resources`ディレクトリ直�
 
 初期化を行う。ドキュメントを区別するためのIDが渡される。このIDを、閲覧中の文書を特定する情報として、マーカー情報と合わせてDBなどに保存させることを意図しているが、プラグインは他の方法で閲覧中の文書が特定できるのであれば、必ずしもこの情報を利用する必要はない。
 
-IDは、URLのquery parametersのうち、`src`・`bookMode`・`style`・`userStyle`を`:`で繋いだ次のような文字列である。
+IDは、文書のURLである。
 
-`<src>:<bookMode>:<style>:<userStyle>`
-
-例えば、`&src=/thebook/&bookMode=true&userStyle=/content/thebook-style.css`に対しては、以下の文字列がdocumentIdとなる。
-`/thebook/:true::/content/thebook-style.css`
-
-##### `async persistMark(mark: {mark: string, id: string, memo: string}, markedText: string): Promise<string>`
+##### `async persistMark(mark: {mark: string, id: string, memo: string, markedText: string}): Promise<string>`
 
 渡された`mark`オブジェクトに一意なidをセットし、`documentId`などの閲覧中の文書を区別する情報と共に記憶する。戻り値としてidを返却する。
 idはstringでなくてはならない。（例えばnumberであってはならない）。
 
 `markedText`には、マークされた部分のテキスト情報が入る。
 
-##### `async getMark(id: string): Promise<{ mark: string, id: string, memo: string}| undefined }>`
+##### `async getMark(id: string): Promise<{ mark: string, id: string, memo: string, markedText: string}| undefined }>`
 
 渡された`id`を持つ`mark`を返す。
 
-##### `async updateMark(mark: {mark: string, id: string, memo: string}): Promise<void>`
+##### `async updateMark(mark: {mark: string, id: string, memo: string, markedText: string}): Promise<void>`
 
 渡された`mark`を更新する。`mark`の判別は`id`で行う。（同じ`id`でコピーされたオブジェクトが渡される場合もあるため）
 
-##### `async removeMark(mark: {mark: string, id: string, memo: string}): Promise<void>`
+##### `async removeMark(mark: {mark: string, id: string, memo: string, markedText: string}): Promise<void>`
 
 渡された`mark`を削除する。
 
-##### `async allMarks(): Promise<{mark:string, id: string, memo: string}[]>`
+##### `async allMarks(): Promise<{mark:string, id: string, memo: string, markedText: string}[]>`
 
 閲覧中のに文書に対応するすべての`mark`を配列で返す。メモリにすべてが載ってしまうため、可能なら次の`allMarksIterator`も実装するのが望ましい。
 
-##### `async allMarksIterator(): Promise<AsyncIterable<{mark:string, id: string memo: string}>>` 
+##### `async allMarksIterator(): Promise<AsyncIterable<{mark:string, id: string memo: string, markedText: string}>>` 
 
 （オプショナル） 閲覧中の文書に対応するすべての`mark`に対する、`AsyncIterable`を返す。
 
@@ -72,8 +67,8 @@ class TestMarkStore {
     console.log(`-----${documentId}-----`);
     this.documentId = documentId;
   }
-  async persistMark(mark, markedText) {
-    console.log(`highlighted: ${markedText}`);
+  async persistMark(mark) {
+    console.log(`highlighted: ${mark.markedText}`);
     const id = `${this.seq++}`;
     mark.id = id;
     this.marks[id] = mark;
